@@ -8,8 +8,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.jeremiasmiguel.cursospringmc.domain.Categoria;
+import com.jeremiasmiguel.cursospringmc.domain.Cidade;
+import com.jeremiasmiguel.cursospringmc.domain.Estado;
 import com.jeremiasmiguel.cursospringmc.domain.Produto;
 import com.jeremiasmiguel.cursospringmc.repositories.CategoriaRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.CidadeRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.EstadoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -19,6 +23,10 @@ public class CursospringmcApplication implements CommandLineRunner {
 	CategoriaRepository categoriaRepository;
 	@Autowired
 	ProdutoRepository produtoRepository;
+	@Autowired
+	EstadoRepository estadoRepository;
+	@Autowired
+	CidadeRepository cidadeRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CursospringmcApplication.class, args);
@@ -26,22 +34,23 @@ public class CursospringmcApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// instanciando categorias
+		
+		// PRODUTO E CATEGORIA
+		
 		Categoria categoria1 = new Categoria(null, "Informática");
 		Categoria categoria2 = new Categoria(null, "Escritório");
 		
-		// instanciando produtos
 		Produto produto1 = new Produto(null, "Computador", 2099.0);
 		Produto produto2 = new Produto(null, "Impressora", 899.0);
 		Produto produto3 = new Produto(null, "Mouse", 89.90);
 		
-		// adicionando produtos às categorias equivalentes
+		// Adicionando produtos às categorias equivalentes
 		// CATEGORIA 1 - Informática (Computador, impressora e mouse)
 		categoria1.getProdutos().addAll(Arrays.asList(produto1, produto2, produto3));
 		// CATEGORIA 2 - Escritório (Impressora)
 		categoria2.getProdutos().addAll(Arrays.asList(produto2));
 		
-		// adicionando categorias aos produtos que se adequam a mesma
+		// Adicionando categorias aos produtos que se adequam a mesma
 		// PRODUTO 1 - Computador (informática)
 		produto1.getCategorias().addAll(Arrays.asList(categoria1));
 		// PRODUTO 2 - Impressora (informática e escritório)
@@ -49,10 +58,25 @@ public class CursospringmcApplication implements CommandLineRunner {
 		// PRODUTO 3 - Mouse (informática)
 		produto3.getCategorias().addAll(Arrays.asList(categoria1));
 		
-		
 		// salvando no banco de dados, com o repository
 		categoriaRepository.saveAll(Arrays.asList(categoria1, categoria2));
 		produtoRepository.saveAll(Arrays.asList(produto1, produto2, produto3));
+		
+		// ESTADO E CIDADE
+		
+		Estado estado1 = new Estado(null, "Minas Gerais");
+		Estado estado2 = new Estado(null, "São Paulo");
+		
+		// Muitos para um -> Associação direta no construtor
+		Cidade cidade1 = new Cidade(null, "Uberlândia", estado1);
+		Cidade cidade2 = new Cidade(null, "São Paulo", estado2);
+		Cidade cidade3 = new Cidade(null, "Campinas", estado2);
+		
+		estado1.getCidades().addAll(Arrays.asList(cidade1));
+		estado2.getCidades().addAll(Arrays.asList(cidade2, cidade3));
+		
+		estadoRepository.saveAll(Arrays.asList(estado1, estado2));
+		cidadeRepository.saveAll(Arrays.asList(cidade1, cidade2, cidade3));
 	}
 
 }
