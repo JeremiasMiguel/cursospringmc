@@ -18,12 +18,12 @@ public class CategoriaResource {
 	
 	// indicando que o atributo/classe vai ser automaticamente instanciado
 	@Autowired
-	private CategoriaService service;
+	private CategoriaService categoriaService;
 
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<?> find(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
-		Categoria obj = service.buscar(id);
-		return ResponseEntity.ok().body(obj);
+		Categoria objetoCategoria = categoriaService.buscar(id);
+		return ResponseEntity.ok().body(objetoCategoria);
 	}
 	
 }

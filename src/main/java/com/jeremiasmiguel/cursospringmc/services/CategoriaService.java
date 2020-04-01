@@ -7,17 +7,19 @@ import org.springframework.stereotype.Service;
 
 import com.jeremiasmiguel.cursospringmc.domain.Categoria;
 import com.jeremiasmiguel.cursospringmc.repositories.CategoriaRepository;
+import com.jeremiasmiguel.cursospringmc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class CategoriaService {
 
 	// indicando que o atributo/classe vai ser automaticamente instanciado
 	@Autowired
-	private CategoriaRepository repository;
+	private CategoriaRepository categoriaRepository;
 
 	public Categoria buscar(Integer id) {
-		Optional<Categoria> obj = repository.findById(id);
-		return obj.orElse(null);
-	}
-
+		 Optional<Categoria> objetoCategoria = categoriaRepository.findById(id);
+		return objetoCategoria.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName())
+		);
+	} 
 }
