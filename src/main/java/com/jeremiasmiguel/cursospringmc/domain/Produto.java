@@ -8,33 +8,40 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-// indicando que a classe vai ser uma entidade do JPA
 @Entity
-public class Categoria implements Serializable {
+public class Produto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	// indicando o ID da entidade e gerando o valor com IDENTITY
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	private String nome;
+	private Double preco;
 	
-	@ManyToMany(mappedBy = "categorias")
-	// acima: é realizado o mapeamento do atributo, donde foi realizada a criação da tabela
-	// intermediadora, na classe Produto, no atributo CATEGORIAS, com isso, não é necessário
-	// refazer a tabela de meio de campo
-	private List<Produto> produtos = new ArrayList<>();
+	@ManyToMany
+	@JoinTable(
+		name="PRODUTO_CATEGORIA",
+		joinColumns = @JoinColumn(name = "idProduto"),
+		inverseJoinColumns = @JoinColumn(name = "idCategoria")
+	)
+	// acima: mapeamento da lista de categorias informando qual vai ser a tabela que vai intermediar
+	// no banco de dados as tabelas PRODUTO e CATEGORIA, visto que é uma associação muitos para muitos,
+	// indicando também as chaves estrangeiras que chegarão e o nome das mesmas
+	private List<Categoria> categorias = new ArrayList<>(); 
 	
-	public Categoria() {
+	public Produto() {
 		
 	}
 
-	public Categoria(Integer id, String nome) {
+	public Produto(Integer id, String nome, Double preco) {
 		super();
 		this.id = id;
 		this.nome = nome;
+		this.preco = preco;
 	}
 
 	public Integer getId() {
@@ -52,13 +59,21 @@ public class Categoria implements Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
-	public List<Produto> getProdutos() {
-		return produtos;
+
+	public Double getPreco() {
+		return preco;
 	}
 
-	public void setProdutos(List<Produto> produtos) {
-		this.produtos = produtos;
+	public void setPreco(Double preco) {
+		this.preco = preco;
+	}
+
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
+	public void setCategorias(List<Categoria> categorias) {
+		this.categorias = categorias;
 	}
 
 	@Override
@@ -77,12 +92,12 @@ public class Categoria implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Categoria other = (Categoria) obj;
+		Produto other = (Produto) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}	
+	}
 }
