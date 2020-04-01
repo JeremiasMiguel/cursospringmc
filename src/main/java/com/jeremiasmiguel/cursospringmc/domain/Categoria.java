@@ -2,11 +2,19 @@ package com.jeremiasmiguel.cursospringmc.domain;
 
 import java.io.Serializable;
 
-// O serializable serve para transformar a classe em uma sequência de bits, a fim de gravar em
-// arquivos e trafegar em rede
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+// indicando que a classe vai ser uma entidade do JPA
+@Entity
 public class Categoria implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	// indicando o ID da entidade e gerando o valor com IDENTITY
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	private String nome;
 	
