@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.jeremiasmiguel.cursospringmc.domain.Categoria;
 import com.jeremiasmiguel.cursospringmc.domain.Cidade;
+import com.jeremiasmiguel.cursospringmc.domain.Cliente;
+import com.jeremiasmiguel.cursospringmc.domain.Endereco;
 import com.jeremiasmiguel.cursospringmc.domain.Estado;
 import com.jeremiasmiguel.cursospringmc.domain.Produto;
+import com.jeremiasmiguel.cursospringmc.domain.enums.TipoCliente;
 import com.jeremiasmiguel.cursospringmc.repositories.CategoriaRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.CidadeRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.ClienteRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.EnderecoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.EstadoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.ProdutoRepository;
 
@@ -27,6 +32,10 @@ public class CursospringmcApplication implements CommandLineRunner {
 	EstadoRepository estadoRepository;
 	@Autowired
 	CidadeRepository cidadeRepository;
+	@Autowired
+	ClienteRepository clienteRepository;
+	@Autowired
+	EnderecoRepository enderecoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CursospringmcApplication.class, args);
@@ -75,8 +84,26 @@ public class CursospringmcApplication implements CommandLineRunner {
 		estado1.getCidades().addAll(Arrays.asList(cidade1));
 		estado2.getCidades().addAll(Arrays.asList(cidade2, cidade3));
 		
+		// salvando no banco de dados, com o repository
 		estadoRepository.saveAll(Arrays.asList(estado1, estado2));
 		cidadeRepository.saveAll(Arrays.asList(cidade1, cidade2, cidade3));
+		
+		// CLIENTE, ENDEREÇO E TELEFONES
+		
+		// Inserindo cliente e alguns telefones
+		Cliente cliente1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+		cliente1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+		
+		// Inserindo endereços e relacionando a cidades e clientes
+		Endereco endereco1 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Jardim", "38220834", cliente1, cidade1);
+		Endereco endereco2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cliente1, cidade2);
+	
+		// Relacionando os endereços a um respectivo cliente (o cliente tem dois endereços diferentes)
+		cliente1.getEnderecos().addAll(Arrays.asList(endereco1, endereco2));
+		
+		// salvando no banco de dados, com o repository
+		clienteRepository.saveAll(Arrays.asList(cliente1));
+		enderecoRepository.saveAll(Arrays.asList(endereco1, endereco2));
 	}
 
 }

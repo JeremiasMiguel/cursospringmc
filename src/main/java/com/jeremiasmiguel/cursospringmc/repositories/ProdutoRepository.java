@@ -8,7 +8,7 @@ import com.jeremiasmiguel.cursospringmc.domain.Produto;
 
 // indicando que a interface é um Repository, e extendendo a classe JpaRepository indicando que a interface
 // manuseará a classe Produto, com o identificador sendo um inteiro (atributo ID de produto)
-// com ele, é possível realziar operações de acesso a dados
+// com ele, é possível realizar operações de acesso a dados
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 
