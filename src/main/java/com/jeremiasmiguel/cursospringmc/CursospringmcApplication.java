@@ -13,6 +13,7 @@ import com.jeremiasmiguel.cursospringmc.domain.Cidade;
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
 import com.jeremiasmiguel.cursospringmc.domain.Endereco;
 import com.jeremiasmiguel.cursospringmc.domain.Estado;
+import com.jeremiasmiguel.cursospringmc.domain.ItemPedido;
 import com.jeremiasmiguel.cursospringmc.domain.Pagamento;
 import com.jeremiasmiguel.cursospringmc.domain.PagamentoComBoleto;
 import com.jeremiasmiguel.cursospringmc.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.jeremiasmiguel.cursospringmc.repositories.CidadeRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.ClienteRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.EnderecoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.EstadoRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.ItemPedidoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.PagamentoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.PedidoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.ProdutoRepository;
@@ -48,6 +50,8 @@ public class CursospringmcApplication implements CommandLineRunner {
 	PagamentoRepository pagamentoRepository;
 	@Autowired
 	PedidoRepository pedidoRepository;
+	@Autowired
+	ItemPedidoRepository itemPedidoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CursospringmcApplication.class, args);
@@ -139,6 +143,25 @@ public class CursospringmcApplication implements CommandLineRunner {
 		// Salvando no banco de dados (repository)
 		pedidoRepository.saveAll(Arrays.asList(pedido1, pedido2));
 		pagamentoRepository.saveAll(Arrays.asList(pagamento1, pagamento2));
+		
+		// ITEMPEDIDO (Classe associativa entre Pedido e Produto)
+		
+		// Inserindo os itens
+		ItemPedido itemPedido1 = new ItemPedido(pedido1, produto1, 0.00, 1, produto1.getPreco());
+		ItemPedido itemPedido2 = new ItemPedido(pedido1, produto3, 0.00, 2, produto3.getPreco());
+		ItemPedido itemPedido3 = new ItemPedido(pedido2, produto2, 100.00, 1, produto2.getPreco());
+		
+		// Interligando os itens respectivos de cada Pedido
+		pedido1.getItens().addAll(Arrays.asList(itemPedido1, itemPedido2));
+		pedido2.getItens().addAll(Arrays.asList(itemPedido3));
+		
+		// Interligando os itens respectivos de cada Produto
+		produto1.getItens().addAll(Arrays.asList(itemPedido1));
+		produto2.getItens().addAll(Arrays.asList(itemPedido3));
+		produto3.getItens().addAll(Arrays.asList(itemPedido2));
+		
+		// Salvando os itens no BD
+		itemPedidoRepository.saveAll(Arrays.asList(itemPedido1, itemPedido2, itemPedido3));
 	}
 
 }

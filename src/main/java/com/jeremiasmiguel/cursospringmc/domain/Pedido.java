@@ -2,6 +2,8 @@ package com.jeremiasmiguel.cursospringmc.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -36,6 +39,12 @@ public class Pedido implements Serializable {
 	@JoinColumn(name = "idEnderecoEntrega")
 	// JoinColumn -> O nome da chave estrangeira na tabela Pedido
 	private Endereco enderecoDeEntrega;
+	
+	@OneToMany(mappedBy = "id.pedido")
+	// OneToMany -> O pedido individual sabe/contém uma lista de itens
+	// mappedBy -> Do outro lado há a classe associativa ItemPedido que tem o objeto ID (ItemPedidoFK id),
+	// que se trata de um objeto auxiliar que tem a referência para o pedido
+	private Set<ItemPedido> itens = new HashSet<>();
 
 	public Pedido() {
 
@@ -89,6 +98,14 @@ public class Pedido implements Serializable {
 
 	public void setEnderecoDeEntrega(Endereco enderecoDeEntrega) {
 		this.enderecoDeEntrega = enderecoDeEntrega;
+	}
+	
+	public Set<ItemPedido> getItens() {
+		return itens;
+	}
+
+	public void setItens(Set<ItemPedido> itens) {
+		this.itens = itens;
 	}
 
 	@Override
