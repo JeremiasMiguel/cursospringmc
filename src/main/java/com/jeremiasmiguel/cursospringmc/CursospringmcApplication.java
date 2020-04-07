@@ -1,5 +1,6 @@
 package com.jeremiasmiguel.cursospringmc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import com.jeremiasmiguel.cursospringmc.domain.Cidade;
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
 import com.jeremiasmiguel.cursospringmc.domain.Endereco;
 import com.jeremiasmiguel.cursospringmc.domain.Estado;
+import com.jeremiasmiguel.cursospringmc.domain.Pagamento;
+import com.jeremiasmiguel.cursospringmc.domain.PagamentoComBoleto;
+import com.jeremiasmiguel.cursospringmc.domain.PagamentoComCartao;
+import com.jeremiasmiguel.cursospringmc.domain.Pedido;
 import com.jeremiasmiguel.cursospringmc.domain.Produto;
+import com.jeremiasmiguel.cursospringmc.domain.enums.EstadoPagamento;
 import com.jeremiasmiguel.cursospringmc.domain.enums.TipoCliente;
 import com.jeremiasmiguel.cursospringmc.repositories.CategoriaRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.CidadeRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.ClienteRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.EnderecoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.EstadoRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.PagamentoRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.PedidoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -36,6 +44,10 @@ public class CursospringmcApplication implements CommandLineRunner {
 	ClienteRepository clienteRepository;
 	@Autowired
 	EnderecoRepository enderecoRepository;
+	@Autowired
+	PagamentoRepository pagamentoRepository;
+	@Autowired
+	PedidoRepository pedidoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CursospringmcApplication.class, args);
@@ -104,6 +116,29 @@ public class CursospringmcApplication implements CommandLineRunner {
 		// salvando no banco de dados, com o repository
 		clienteRepository.saveAll(Arrays.asList(cliente1));
 		enderecoRepository.saveAll(Arrays.asList(endereco1, endereco2));
+		
+		// PEDIDO, ENDEREÇO DE ENTREGA, PAGAMENTO E ESTADO_PAGAMENTO
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		// Inserindo pedidos e relacionando endereço e cliente
+		Pedido pedido1 = new Pedido(null, simpleDateFormat.parse("30/09/2017 10:32"), cliente1, endereco1);
+		Pedido pedido2 = new Pedido(null, simpleDateFormat.parse("10/10/2017 19:35"), cliente1, endereco2);
+		
+		// Inserindo pagamentos e relacionando a um pedido, e logo após confirmando a forma de 
+		// pagamento dos pedidos
+		Pagamento pagamento1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, pedido1, 6);
+		pedido1.setPagamento(pagamento1);
+		
+		Pagamento pagamento2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, pedido2, simpleDateFormat.parse("20/10/2017 00:00"), null);
+		pedido2.setPagamento(pagamento2);
+		
+		// Adicionando os pedidos que foram criados a um respectivo cliente que pediu
+		cliente1.getPedidos().addAll(Arrays.asList(pedido1, pedido2));
+		
+		// Salvando no banco de dados (repository)
+		pedidoRepository.saveAll(Arrays.asList(pedido1, pedido2));
+		pagamentoRepository.saveAll(Arrays.asList(pagamento1, pagamento2));
 	}
 
 }
