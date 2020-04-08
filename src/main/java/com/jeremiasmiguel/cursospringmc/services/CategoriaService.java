@@ -3,10 +3,12 @@ package com.jeremiasmiguel.cursospringmc.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jeremiasmiguel.cursospringmc.domain.Categoria;
 import com.jeremiasmiguel.cursospringmc.repositories.CategoriaRepository;
+import com.jeremiasmiguel.cursospringmc.services.exceptions.DataIntegrityException;
 import com.jeremiasmiguel.cursospringmc.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -34,5 +36,18 @@ public class CategoriaService {
 		// Verificando se o ID pesquisado para alteração existe ou não é nulo
 		this.find(categoria.getId());
 		return categoriaRepository.save(categoria);
+	}
+	
+	public void delete(Integer id) {
+		this.find(id);
+		try {
+			categoriaRepository.deleteById(id);
+		}
+		// Exceção causada pela tentativa de exclusão de uma entidade que contém outras relacionadas, 
+		// por exemplo, a entidade Categoria pode conter Produtos relacionados a ela, se houver,
+		// a exclusão é abortada por meio dessa captura de uma exceção personalizada criada (DataIntegrityException)
+		catch(DataIntegrityViolationException exception) {
+			throw new DataIntegrityException("Não é possível realizar a exclusão de uma Categoria que contenha Produtos.");
+		}
 	}
 }

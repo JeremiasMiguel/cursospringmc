@@ -45,4 +45,10 @@ public class CategoriaResource {
 		categoria = categoriaService.update(categoria);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<Categoria> delete(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
+		categoriaService.delete(id);
+		return ResponseEntity.noContent().build();
+	}
 }
