@@ -1,5 +1,6 @@
 package com.jeremiasmiguel.cursospringmc.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,9 @@ public class CategoriaService {
 		catch(DataIntegrityViolationException exception) {
 			throw new DataIntegrityException("Não é possível realizar a exclusão de uma Categoria que contenha Produtos.");
 		}
+	}
+	
+	public List<Categoria> findAll() {
+		return categoriaRepository.findAll();
 	}
 }

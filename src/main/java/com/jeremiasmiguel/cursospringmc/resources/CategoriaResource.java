@@ -1,6 +1,8 @@
 package com.jeremiasmiguel.cursospringmc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jeremiasmiguel.cursospringmc.domain.Categoria;
+import com.jeremiasmiguel.cursospringmc.dto.CategoriaDTO;
 import com.jeremiasmiguel.cursospringmc.services.CategoriaService;
 
 // indicando que a classe é um controlador REST
@@ -50,5 +53,15 @@ public class CategoriaResource {
 	public ResponseEntity<Categoria> delete(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
 		categoriaService.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	// Retornando todas as categorias (endpoint: /categorias)
+	// Usando DTO para retornar somente os dados realmente necessários (id e nome - sem os produtos)
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() { 
+		List<Categoria> listaCategorias = categoriaService.findAll();
+		// Convertendo a lista de Categorias para uma lista de CategoriasDTO
+		List<CategoriaDTO> listaCategoriasDTO = listaCategorias.stream().map(objetoCategoria -> new CategoriaDTO(objetoCategoria)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaCategoriasDTO);
 	}
 }
