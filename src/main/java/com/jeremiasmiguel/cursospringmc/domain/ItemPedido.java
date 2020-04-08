@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class ItemPedido implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -13,8 +15,10 @@ public class ItemPedido implements Serializable {
 	// contendo o Pedido e o Produto, com a adição das chaves estrangeiras dos mesmos na Tabela
 	// associativa ItemPedido, no construtor há a repartição das classes e a designação correta
 	
+	@JsonIgnore
 	@EmbeddedId
 	// EmbeddedId -> Define que o identificar abaixo é um ID embutido em um tipo auxiliar (ItemPedidoFK)
+	// JsonIgnore -> Inibe que o ItemPedido serialize pedido e pagamento
 	private ItemPedidoPK id = new ItemPedidoPK();
 	
 	private Double desconto;
@@ -34,10 +38,15 @@ public class ItemPedido implements Serializable {
 		this.preco = preco;
 	}
 	
+	@JsonIgnore
+	// JsonIgnore -> Evita serialização cíclica, pois os itens não devem serializar os pedidos
+	// Já os produtos podem ser serializados, para que na busca por pedidos, veja-se os produtos que
+	// os ItemPedidos se referem
 	public Pedido getPedido() {
 		return id.getPedido();
 	}
 	
+	// Não é necessário JsonIgnore
 	public Produto getProduto() {
 		return id.getProduto();
 	}
