@@ -21,8 +21,8 @@ public class ClienteResource {
 	private ClienteService clienteService;
 
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<?> find(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
-		Cliente objetoCliente= clienteService.buscar(id);
+	public ResponseEntity<Cliente> find(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
+		Cliente objetoCliente= clienteService.find(id);
 		return ResponseEntity.ok().body(objetoCliente);
 	}
 	

@@ -16,15 +16,23 @@ public class CategoriaService {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 
-	public Categoria buscar(Integer id) {
-		 Optional<Categoria> objetoCategoria = categoriaRepository.findById(id);
+	public Categoria find(Integer id) {
+		Optional<Categoria> objetoCategoria = categoriaRepository.findById(id);
 		return objetoCategoria.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName())
 		);
 	} 
 	
-	public Categoria inserir(Categoria categoria) {
+	public Categoria insert(Categoria categoria) {
 		categoria.setId(null);
+		return categoriaRepository.save(categoria);
+	}
+	
+	// O método SAVE serve tanto para inserir como para atualizar, a única diferença é o ID,
+	// se for nulo, ele adiciona, se não for, ele atualiza
+	public Categoria update(Categoria categoria) {
+		// Verificando se o ID pesquisado para alteração existe ou não é nulo
+		this.find(categoria.getId());
 		return categoriaRepository.save(categoria);
 	}
 }
