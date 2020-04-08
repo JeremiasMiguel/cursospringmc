@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 // indicando que a classe vai ser uma entidade do JPA
 @Entity
 public class Categoria implements Serializable {
@@ -26,7 +24,7 @@ public class Categoria implements Serializable {
 	// indica o lado que é desejável que venham os objetos associados (os produtos pertencentes
 	// de categoria)
 	// na classe produto então, há o travamento de busca por categorias, com outra anotação
-	@JsonManagedReference
+	//@JsonManagedReference
 	@ManyToMany(mappedBy = "categorias")
 	// acima: é realizado o mapeamento do atributo, donde foi realizada a criação da tabela
 	// intermediadora, na classe Produto, no atributo CATEGORIAS, com isso, não é necessário
