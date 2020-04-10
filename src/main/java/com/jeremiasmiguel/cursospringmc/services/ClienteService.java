@@ -9,10 +9,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.jeremiasmiguel.cursospringmc.domain.Cidade;
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
+import com.jeremiasmiguel.cursospringmc.domain.Endereco;
+import com.jeremiasmiguel.cursospringmc.domain.enums.TipoCliente;
 import com.jeremiasmiguel.cursospringmc.dto.ClienteDTO;
+import com.jeremiasmiguel.cursospringmc.dto.ClienteNewDTO;
 import com.jeremiasmiguel.cursospringmc.repositories.ClienteRepository;
+import com.jeremiasmiguel.cursospringmc.repositories.EnderecoRepository;
 import com.jeremiasmiguel.cursospringmc.services.exceptions.DataIntegrityException;
 import com.jeremiasmiguel.cursospringmc.services.exceptions.ObjectNotFoundException;
 
@@ -22,6 +28,8 @@ public class ClienteService {
 	// indicando que o atributo/classe vai ser automaticamente instanciado
 	@Autowired
 	private ClienteRepository clienteRepository;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public Cliente find(Integer id) {
 		Optional<Cliente> objetoCliente = clienteRepository.findById(id);
@@ -29,6 +37,15 @@ public class ClienteService {
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
 	}
 
+	@Transactional
+	// Indicando que as entidades Endereco e Cliente são salvas em uma mesma transação
+	public Cliente insert(Cliente cliente) {
+		cliente.setId(null);
+		cliente = clienteRepository.save(cliente);
+		enderecoRepository.saveAll(cliente.getEnderecos());
+		return cliente;
+	}
+	
 	// O método SAVE serve tanto para inserir como para atualizar, a única diferença é o ID,
 	// se for nulo, ele adiciona, se não for, ele atualiza
 	public Cliente update(Cliente cliente) {
@@ -75,6 +92,21 @@ public class ClienteService {
 	// Convertendo uma Cliente em ClienteDTO
 	public Cliente fromDTO(ClienteDTO clienteDTO) {
 		return new Cliente(clienteDTO.getId(), clienteDTO.getNome(), clienteDTO.getEmail(), null, null);
+	}
+	
+	public Cliente fromDTO(ClienteNewDTO clienteNewDTO) {
+		Cliente cliente = new Cliente(null, clienteNewDTO.getNome(), clienteNewDTO.getEmail(), clienteNewDTO.getCpfOuCnpj(), TipoCliente.toEnum(clienteNewDTO.getTipoCliente()));
+		Cidade cidade = new Cidade(clienteNewDTO.getCidadeId(), null, null);
+		Endereco endereco = new Endereco(null, clienteNewDTO.getLogradouro(), clienteNewDTO.getNumero(), clienteNewDTO.getComplemento(), clienteNewDTO.getBairro(), clienteNewDTO.getCep(), cliente, cidade);
+		cliente.getEnderecos().add(endereco);
+		cliente.getTelefones().add(clienteNewDTO.getTelefone1());
+		if (clienteNewDTO.getTelefone2()!=null) {
+			cliente.getTelefones().add(clienteNewDTO.getTelefone2());
+		}
+		if (clienteNewDTO.getTelefone3()!=null) {
+			cliente.getTelefones().add(clienteNewDTO.getTelefone3());
+		}
+		return cliente;
 	}
 
 	private void updateData(Cliente novoCliente, Cliente cliente) {

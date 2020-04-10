@@ -1,5 +1,6 @@
 package com.jeremiasmiguel.cursospringmc.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
 import com.jeremiasmiguel.cursospringmc.dto.ClienteDTO;
+import com.jeremiasmiguel.cursospringmc.dto.ClienteNewDTO;
 import com.jeremiasmiguel.cursospringmc.services.ClienteService;
 
 // indicando que a classe é um controlador REST
@@ -33,6 +36,18 @@ public class ClienteResource {
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
 		Cliente objetoCliente= clienteService.find(id);
 		return ResponseEntity.ok().body(objetoCliente);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO clienteNewDTO) { 
+		// Valid -> Para que o objeto DTO seja validado antes de ser manipulado | RequestBody -> Faz que o json se converta em objeto Java
+		// Converte Cliente em DTO
+		Cliente cliente = this.clienteService.fromDTO(clienteNewDTO);
+		cliente = clienteService.insert(cliente);
+		// Definindo o endpoint e retornando a resposta da entidade de acordo com a resposta do sistema (URI), seguindo
+		// as boas práticas da arquitetura REST
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cliente.getId()).toUri();
+		return ResponseEntity.created(uri).build();
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
