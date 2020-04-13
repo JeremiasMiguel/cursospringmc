@@ -44,6 +44,7 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 		Cliente clienteAuxiliar = clienteRepository.findByEmail(clienteNewDTO.getEmail());
 		if(clienteAuxiliar != null) {
 			list.add(new FieldMessage("email", "Email já existente"));
+			
 		}
 
 		for (FieldMessage e : list) {

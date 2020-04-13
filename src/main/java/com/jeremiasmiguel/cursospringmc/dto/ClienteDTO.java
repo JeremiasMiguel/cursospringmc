@@ -8,8 +8,10 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
+import com.jeremiasmiguel.cursospringmc.services.validation.ClienteUpdate;
 
 /* Classe auxiliar de Cliente que serve para atualização */
+@ClienteUpdate
 public class ClienteDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
