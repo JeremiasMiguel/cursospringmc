@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -33,9 +34,11 @@ public class Cliente implements Serializable {
 	private Integer tipoCliente;
 	
 	//@JsonManagedReference
-	@OneToMany(mappedBy = "cliente")
+	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
 	// OneToMany -> Um para muitos. Um cliente pode ter vários endereços
 	// mappedBy -> Indicando que já houve mapeamento na classe Endereco, com o atributo CLIENTE
+	// CascadeType -> Como o endereço vai se comportar quando houver a exclusão de um cliente
+	// ALL -> Quando houver manipulação no cliente, o endereço em toda parte será modificado também
 	private List<Endereco> enderecos = new ArrayList<>();
 	
 	// Entidade fraca TELEFONE -> Pode se classificar como uma coleção de Strings relacionadas
