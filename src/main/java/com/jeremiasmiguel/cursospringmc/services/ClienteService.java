@@ -69,7 +69,7 @@ public class ClienteService {
 		 */
 		catch (DataIntegrityViolationException exception) {
 			throw new DataIntegrityException(
-					"Não é possível realizar a exclusão de um Cliente que contenha entidades relacionadas.");
+					"Não é possível realizar a exclusão de um Cliente que contenha Pedidos relacionados.");
 		}
 	}
 

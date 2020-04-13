@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
 
+/* Classe auxiliar de Cliente que serve para atualização */
 public class ClienteDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
