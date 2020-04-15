@@ -45,7 +45,7 @@ public class ClienteUpdateValidator implements ConstraintValidator<ClienteUpdate
 		// Nesse caso, é necessário verificar se o email que for igual não é o do próprio cliente que se deseja atualizar,
 		// o email duplicado deve ser de outro cliente que não seja o próprio
 		Cliente clienteAuxiliar = clienteRepository.findByEmail(clienteDTO.getEmail());
-		// Verificando se o ID buscado é igual ao que foi apontado, se for, é porque outro cliente já tem esse email
+		// Verificando se o ID buscado é igual ao que foi apontado, se não for, é porque outro cliente já tem esse email
 		if(clienteAuxiliar != null && !clienteAuxiliar.getId().equals(uriID)) {
 			list.add(new FieldMessage("email", "Email já existente"));
 		}
