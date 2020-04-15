@@ -38,6 +38,11 @@ public class ItemPedido implements Serializable {
 		this.preco = preco;
 	}
 	
+	// Utiliza-se o get na frente para que esse dado apareça no GET json de um ItemPedido dentro do pedido
+	public Double getSubTotal() {
+		return (this.preco - this.desconto) * this.quantidade;
+	}
+	
 	@JsonIgnore
 	// JsonIgnore -> Evita serialização cíclica, pois os itens não devem serializar os pedidos
 	// Já os produtos podem ser serializados, para que na busca por pedidos, veja-se os produtos que

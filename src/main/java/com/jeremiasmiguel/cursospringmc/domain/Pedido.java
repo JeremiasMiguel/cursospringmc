@@ -67,6 +67,15 @@ public class Pedido implements Serializable {
 		this.enderecoDeEntrega = enderecoDeEntrega;
 	}
 
+	// Utiliza-se o get na frente para que esse dado apareça no GET json de um ItemPedido dentro do pedido
+	public Double getValorTotal() {
+		Double soma = 0.0;
+		for(ItemPedido item : this.itens) {
+			soma += item.getSubTotal();
+		}
+		return soma;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
