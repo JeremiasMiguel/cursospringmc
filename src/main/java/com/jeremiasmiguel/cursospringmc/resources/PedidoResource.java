@@ -1,11 +1,17 @@
 package com.jeremiasmiguel.cursospringmc.resources;
 
+import java.net.URI;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jeremiasmiguel.cursospringmc.domain.Pedido;
 import com.jeremiasmiguel.cursospringmc.services.PedidoService;
@@ -24,6 +30,17 @@ public class PedidoResource {
 	public ResponseEntity<Pedido> find(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
 		Pedido objetoPedido = pedidoService.find(id);
 		return ResponseEntity.ok().body(objetoPedido);
+	}
+	
+	// Não foi criado um DTO para o pedido porque há muitos dados associados
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody Pedido pedido) { 
+		// Valid -> Para que o objeto seja validado antes de ser manipulado | RequestBody -> Faz que o json se converta em objeto Java
+		pedido = pedidoService.insert(pedido);
+		// Definindo o endpoint e retornando a resposta da entidade de acordo com a resposta do sistema (URI), seguindo
+		// as boas práticas da arquitetura REST
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(pedido.getId()).toUri();
+		return ResponseEntity.created(uri).build();
 	}
 	
 }

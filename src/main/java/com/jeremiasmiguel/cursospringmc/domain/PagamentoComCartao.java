@@ -2,9 +2,14 @@ package com.jeremiasmiguel.cursospringmc.domain;
 
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.jeremiasmiguel.cursospringmc.domain.enums.EstadoPagamento;
 
 @Entity
+@JsonTypeName("pagamentoComCartao")
+/* Definindo o nome do Type que foi criado na classe abstrata Pagamento 
+ * para as subclasses que estendem essa super classe
+ */
 public class PagamentoComCartao extends Pagamento {
 	private static final long serialVersionUID = 1L;
 	

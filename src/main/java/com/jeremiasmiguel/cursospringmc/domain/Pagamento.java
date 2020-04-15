@@ -11,12 +11,18 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.jeremiasmiguel.cursospringmc.domain.enums.EstadoPagamento;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-// Inheritance -> Mapeamento de herança com o JPA, abordando a estratégia da criação de tabelas
-// independentes para as classes que herdam a classe Pagamento (PagamentoComBoleto, PagamentoComCartao)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+/* Inheritance -> Mapeamento de herança com o JPA, abordando a estratégia da criação de tabelas
+ * independentes para as classes que herdam a classe Pagamento (PagamentoComBoleto, PagamentoComCartao)
+ * JsonTypeInfo -> Campo adicional que será informado quando for passado um pagamento definindo o tipo,
+ * e nas classes que estendem Pagamento serão registrados os nomes que esse tipo receberá
+*/
+
 public abstract class Pagamento implements Serializable {
 	private static final long serialVersionUID = 1L;
 
