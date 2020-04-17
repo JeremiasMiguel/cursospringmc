@@ -1,8 +1,11 @@
 package com.jeremiasmiguel.cursospringmc.domain;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -148,4 +151,28 @@ public class Pedido implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss");
+		StringBuilder builder = new StringBuilder();
+		builder.append("Pedido número: ");
+		builder.append(this.getId());
+		builder.append(", Instante: ");
+		builder.append(sdf.format(this.getInstante()));
+		builder.append(", Cliente: ");
+		builder.append(this.getCliente().getNome());
+		builder.append(", Situação de pagamento: ");
+		builder.append(this.getPagamento().getEstadoPagamento().getDescricao());
+		builder.append("\nDetalhes:\n");
+		for(ItemPedido item : this.getItens()) {
+			builder.append(item.toString());
+		}
+		builder.append("Valor total: ");
+		builder.append(nf.format(this.getValorTotal()));
+		return builder.toString();
+	}
+	
+	
 }
