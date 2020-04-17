@@ -31,6 +31,10 @@ public class PedidoService {
 	private ItemPedidoRepository itemPedidoRepository;
 	@Autowired
 	private ClienteService clienteService;
+	
+	// Ao injetar essa interface, há a busca do Bean EmailService em config/TestConfig.java
+	@Autowired
+	private EmailService emailService;
 
 	public Pedido find(Integer id) {
 		Optional<Pedido> objetoPedido = pedidoRepository.findById(id);
@@ -66,7 +70,8 @@ public class PedidoService {
 		// Salvando os itens no BD
 		itemPedidoRepository.saveAll(pedido.getItens());
 		
-		System.out.println(pedido);
+		// Mandando um email depois de inserir o pedido
+		emailService.sendOrderConfirmationEmail(pedido);
 		
 		return pedido;
 	}

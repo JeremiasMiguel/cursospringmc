@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.jeremiasmiguel.cursospringmc.services.DBService;
+import com.jeremiasmiguel.cursospringmc.services.EmailService;
+import com.jeremiasmiguel.cursospringmc.services.MockEmailService;
 
 @Configuration
 @Profile("test")
@@ -28,6 +30,15 @@ public class TestConfig {
 	public boolean instantiateDatabase() throws ParseException {
 		this.dbService.instantiateTestDatabase();
 		return true;
+	}
+	
+	/* Método que instancia a interface EmailService e transforma em um MockEmailService,
+	 * com isso, ao injetar um EmailService, como na inserção de um Pedido, há a busca 
+	 * por um Bean, que é achado nesse arquivo, e há o polimorfismo
+	 */
+	@Bean
+	public EmailService emailService() {
+		return new MockEmailService();
 	}
 	
 }
