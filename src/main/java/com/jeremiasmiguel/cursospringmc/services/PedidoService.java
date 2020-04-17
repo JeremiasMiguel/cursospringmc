@@ -32,7 +32,8 @@ public class PedidoService {
 	@Autowired
 	private ClienteService clienteService;
 	
-	// Ao injetar essa interface, há a busca do Bean EmailService em config/TestConfig.java
+	// Ao injetar essa interface, há a busca do Bean EmailService em config/TestConfig.java se for em modo TEST
+	// Se for no modo DEV, instanciára o SMTPEmailService
 	@Autowired
 	private EmailService emailService;
 

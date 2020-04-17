@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.jeremiasmiguel.cursospringmc.services.DBService;
+import com.jeremiasmiguel.cursospringmc.services.EmailService;
+import com.jeremiasmiguel.cursospringmc.services.SmtpEmailService;
 
 @Configuration
 @Profile("dev")
@@ -40,6 +42,15 @@ public class DevConfig {
 		
 		this.dbService.instantiateTestDatabase();
 		return true;
+	}
+	
+	/* Método que instancia a interface EmailService e transforma em um SmtpEmailService,
+	 * com isso, ao injetar um EmailService, como na inserção de um Pedido, há a busca 
+	 * por um Bean, que é achado nesse arquivo, e há o polimorfismo
+	 */
+	@Bean
+	public EmailService emailService() {
+		return new SmtpEmailService();
 	}
 	
 }
