@@ -20,6 +20,7 @@ import com.jeremiasmiguel.cursospringmc.domain.PagamentoComCartao;
 import com.jeremiasmiguel.cursospringmc.domain.Pedido;
 import com.jeremiasmiguel.cursospringmc.domain.Produto;
 import com.jeremiasmiguel.cursospringmc.domain.enums.EstadoPagamento;
+import com.jeremiasmiguel.cursospringmc.domain.enums.Perfil;
 import com.jeremiasmiguel.cursospringmc.domain.enums.TipoCliente;
 import com.jeremiasmiguel.cursospringmc.repositories.CategoriaRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.CidadeRepository;
@@ -133,20 +134,27 @@ public class DBService {
 		// Inserindo cliente e alguns telefones (senha criptografada)
 		Cliente cliente1 = new Cliente(null, "Maria Silva", "emailtestespringcursomc@gmail.com", "36378912377", TipoCliente.PESSOAFISICA, passwordEncoder.encode("123"));
 		cliente1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+		
+		// Cliente ADMIN
+		Cliente cliente2 = new Cliente(null, "Ana Costa", "olapis2013@gmail.com", "14101176779", TipoCliente.PESSOAFISICA, passwordEncoder.encode("123"));
+		cliente2.addPerfil(Perfil.ADMIN);
+		cliente2.getTelefones().addAll(Arrays.asList("32553333", "93838888"));
 
 		// Inserindo endereços e relacionando a cidades e clientes
-		Endereco endereco1 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Jardim", "38220834", cliente1,
-				cidade1);
-		Endereco endereco2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cliente1,
-				cidade2);
+		Endereco endereco1 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Jardim", "38220834", cliente1, cidade1);
+		Endereco endereco2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cliente1, cidade2);
+		
+		Endereco endereco3 = new Endereco(null, "Avenida Floriano", "2106", null, "Centro", "88780090", cliente2, cidade2);
 
 		// Relacionando os endereços a um respectivo cliente (o cliente tem dois
 		// endereços diferentes)
 		cliente1.getEnderecos().addAll(Arrays.asList(endereco1, endereco2));
+		
+		cliente2.getEnderecos().addAll(Arrays.asList(endereco3));
 
 		// salvando no banco de dados, com o repository
-		clienteRepository.saveAll(Arrays.asList(cliente1));
-		enderecoRepository.saveAll(Arrays.asList(endereco1, endereco2));
+		clienteRepository.saveAll(Arrays.asList(cliente1, cliente2));
+		enderecoRepository.saveAll(Arrays.asList(endereco1, endereco2, endereco3));
 
 		// PEDIDO, ENDEREÇO DE ENTREGA, PAGAMENTO E ESTADO_PAGAMENTO
 
