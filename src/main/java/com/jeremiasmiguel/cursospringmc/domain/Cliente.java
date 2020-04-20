@@ -33,6 +33,10 @@ public class Cliente implements Serializable {
 	// correto com os getters e setters modificados para essa modificação
 	private Integer tipoCliente;
 	
+	@JsonIgnore
+	// JsonIgnore -> Para que não apareça o BCrypt da senha no corpo json
+	private String senha;
+	
 	//@JsonManagedReference
 	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
 	// OneToMany -> Um para muitos. Um cliente pode ter vários endereços
@@ -58,13 +62,14 @@ public class Cliente implements Serializable {
 		
 	}
 
-	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipoCliente) {
+	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipoCliente, String senha) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.cpfOuCnpj = cpfOuCnpj;
 		this.tipoCliente = (tipoCliente == null) ? null : tipoCliente.getCodigo();
+		this.senha = senha;
 	}
 
 	public Integer getId() {
@@ -129,6 +134,14 @@ public class Cliente implements Serializable {
 
 	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
+	}
+	
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 	@Override

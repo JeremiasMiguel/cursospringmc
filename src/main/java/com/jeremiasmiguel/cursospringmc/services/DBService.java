@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jeremiasmiguel.cursospringmc.domain.Categoria;
@@ -34,23 +35,25 @@ import com.jeremiasmiguel.cursospringmc.repositories.ProdutoRepository;
 public class DBService {
 
 	@Autowired
-	CategoriaRepository categoriaRepository;
+	private CategoriaRepository categoriaRepository;
 	@Autowired
-	ProdutoRepository produtoRepository;
+	private ProdutoRepository produtoRepository;
 	@Autowired
-	EstadoRepository estadoRepository;
+	private EstadoRepository estadoRepository;
 	@Autowired
-	CidadeRepository cidadeRepository;
+	private CidadeRepository cidadeRepository;
 	@Autowired
-	ClienteRepository clienteRepository;
+	private ClienteRepository clienteRepository;
 	@Autowired
-	EnderecoRepository enderecoRepository;
+	private EnderecoRepository enderecoRepository;
 	@Autowired
-	PagamentoRepository pagamentoRepository;
+	private PagamentoRepository pagamentoRepository;
 	@Autowired
-	PedidoRepository pedidoRepository;
+	private PedidoRepository pedidoRepository;
 	@Autowired
-	ItemPedidoRepository itemPedidoRepository;
+	private ItemPedidoRepository itemPedidoRepository;
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	public void instantiateTestDatabase() throws ParseException {
 		// PRODUTO E CATEGORIA
@@ -127,8 +130,8 @@ public class DBService {
 
 		// CLIENTE, ENDEREÇO E TELEFONES
 
-		// Inserindo cliente e alguns telefones
-		Cliente cliente1 = new Cliente(null, "Maria Silva", "emailtestespringcursomc@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+		// Inserindo cliente e alguns telefones (senha criptografada)
+		Cliente cliente1 = new Cliente(null, "Maria Silva", "emailtestespringcursomc@gmail.com", "36378912377", TipoCliente.PESSOAFISICA, passwordEncoder.encode("123"));
 		cliente1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
 
 		// Inserindo endereços e relacionando a cidades e clientes
