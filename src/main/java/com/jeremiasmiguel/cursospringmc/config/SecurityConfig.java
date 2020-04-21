@@ -7,14 +7,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.jeremiasmiguel.cursospringmc.security.JWTAuthenticationFilter;
+import com.jeremiasmiguel.cursospringmc.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +27,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private Environment env;
+	@Autowired
+	/*
+	 * O Spring Security busca uma classe que implementa essa interface,
+	 * tal classe é a UserDetailsServiceImpl no pacote de services, após
+	 * buscar, irá injetar tal serviço que diz quem é o responsável por
+	 * buscar um usuário por email
+	 */
+	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	private JWTUtil jwtUtil;
 	
 	// Vetor de strings que definem quais os caminhos que estarão liberados
 	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
@@ -54,8 +70,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		 */
 		http.authorizeRequests().antMatchers(PUBLIC_MATCHERS).permitAll().antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll().anyRequest().authenticated();
 		
+		// Adicionando filtro de autenticação
+		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		
 		// Assegura que o backend não criará sessão de usuário
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
+	
+	/* 
+	 * Método configure com sobrecarga de método, onde se distingue do primeiro pelo parâmetro,
+	 * nesse método, define-se quem é o UserDetailsService e o algoritmo de criptografia da senha
+	 */
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
 	}
 
 	/*
@@ -75,5 +102,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
 }
