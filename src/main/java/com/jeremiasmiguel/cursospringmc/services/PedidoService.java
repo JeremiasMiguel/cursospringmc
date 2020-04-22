@@ -4,8 +4,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.jeremiasmiguel.cursospringmc.domain.Cliente;
 import com.jeremiasmiguel.cursospringmc.domain.ItemPedido;
 import com.jeremiasmiguel.cursospringmc.domain.PagamentoComBoleto;
 import com.jeremiasmiguel.cursospringmc.domain.Pedido;
@@ -13,6 +17,8 @@ import com.jeremiasmiguel.cursospringmc.domain.enums.EstadoPagamento;
 import com.jeremiasmiguel.cursospringmc.repositories.ItemPedidoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.PagamentoRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.PedidoRepository;
+import com.jeremiasmiguel.cursospringmc.security.UserSpringSecurity;
+import com.jeremiasmiguel.cursospringmc.services.exceptions.AuthorizationException;
 import com.jeremiasmiguel.cursospringmc.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -75,5 +81,23 @@ public class PedidoService {
 		emailService.sendOrderConfirmationHtmlEmail(pedido);
 		
 		return pedido;
+	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		// Obtém o usuário logado
+		UserSpringSecurity user = UserService.authenticated();
+		
+		// Verificando se o user não está autenticado
+		if(user == null) {
+			throw new AuthorizationException("Acesso negado!");
+		}
+		
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		
+		// Instanciando a classe Cliente do usuário que está autenticado
+		Cliente cliente = clienteService.find(user.getId());
+		
+		// Com o cliente em mãos, basta buscar o pedido de acordo com o cliente em seu Repository
+		return pedidoRepository.findByCliente(cliente, pageRequest);
 	}
 }
