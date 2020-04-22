@@ -73,4 +73,8 @@ public class UserSpringSecurity implements UserDetails {
 		return true;
 	}
 
+	// Verificando se o usuário contém o perfil que for passado
+	public boolean hasRole(Perfil perfil) {
+		return getAuthorities().contains(new SimpleGrantedAuthority(perfil.getDescricao()));
+	}
 }

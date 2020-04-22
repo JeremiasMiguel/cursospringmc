@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jeremiasmiguel.cursospringmc.domain.Cidade;
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
 import com.jeremiasmiguel.cursospringmc.domain.Endereco;
+import com.jeremiasmiguel.cursospringmc.domain.enums.Perfil;
 import com.jeremiasmiguel.cursospringmc.domain.enums.TipoCliente;
 import com.jeremiasmiguel.cursospringmc.dto.ClienteDTO;
 import com.jeremiasmiguel.cursospringmc.dto.ClienteNewDTO;
 import com.jeremiasmiguel.cursospringmc.repositories.ClienteRepository;
 import com.jeremiasmiguel.cursospringmc.repositories.EnderecoRepository;
+import com.jeremiasmiguel.cursospringmc.security.UserSpringSecurity;
+import com.jeremiasmiguel.cursospringmc.services.exceptions.AuthorizationException;
 import com.jeremiasmiguel.cursospringmc.services.exceptions.DataIntegrityException;
 import com.jeremiasmiguel.cursospringmc.services.exceptions.ObjectNotFoundException;
 
@@ -37,6 +40,13 @@ public class ClienteService {
 	private BCryptPasswordEncoder passwordEncoder;
 
 	public Cliente find(Integer id) {
+		
+		UserSpringSecurity user = UserService.authenticated();
+		// Verifica se o usuário tem permissão de perfil e que o id é igual ao que está autenticado
+		if(user != null && !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado! ");
+		}
+		
 		Optional<Cliente> objetoCliente = clienteRepository.findById(id);
 		return objetoCliente.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
