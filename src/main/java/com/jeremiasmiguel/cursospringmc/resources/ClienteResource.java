@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +59,8 @@ public class ClienteResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	// Os clientes não podem se deletar, só o ADM faz isso
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Cliente> delete(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
 		clienteService.delete(id);
@@ -67,6 +70,7 @@ public class ClienteResource {
 	// Retornando todas as clientes (endpoint: /clientes)
 	// Usando DTO para retornar somente os dados realmente necessários (id e nome - sem os produtos)
 	@RequestMapping(method=RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<List<ClienteDTO>> findAll() { 
 		List<Cliente> listaClientes = clienteService.findAll();
 		// Convertendo a lista de Categorias para uma lista de CategoriasDTO
@@ -78,6 +82,7 @@ public class ClienteResource {
 	   endpoint (clientes/page) e a passagem dos dados será por parâmetros opcionais. 
 	   Exemplo: localhost/clientes/page?page=1&linesPerPage=20*/
 	@RequestMapping(value="/page", method=RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Page<ClienteDTO>> findPage(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
 			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 

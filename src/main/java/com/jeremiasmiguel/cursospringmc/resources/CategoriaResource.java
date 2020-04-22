@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,9 @@ public class CategoriaResource {
 		return ResponseEntity.ok().body(objetoCategoria);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	// Somente quem for admin pode modificar os dados, inserir, deletar.
+	// Para busca (GET), não é necessária essa anotação
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO categoriaDTO) { 
 		// Valid -> Para que o objeto DTO seja validado antes de ser manipulado | RequestBody -> Faz que o json se converta em objeto Java
@@ -49,6 +53,7 @@ public class CategoriaResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO categoriaDTO, @PathVariable Integer id) {
 		Categoria categoria = this.categoriaService.fromDTO(categoriaDTO);
@@ -57,6 +62,7 @@ public class CategoriaResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Categoria> delete(@PathVariable Integer id) { // indicando que o ID da URL vai ter que ir pro id variável
 		categoriaService.delete(id);

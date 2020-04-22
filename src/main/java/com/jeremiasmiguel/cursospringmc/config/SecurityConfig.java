@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,6 +25,8 @@ import com.jeremiasmiguel.cursospringmc.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+// EnableGlobalMethodSecurity -> Permite que seja possível posteriormente colocar anotações de pré-autorização nos endpoints
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -44,7 +47,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
 	
 	// Vetor de strings com caminhos somente de leitura, onde só é possivel recuperar os dados, sem manipulação dos mesmos
-	private static final String[] PUBLIC_MATCHERS_GET = { "/produtos/**", "/categorias/**", "/clientes/**" };
+	private static final String[] PUBLIC_MATCHERS_GET = { 
+			"/produtos/**", 
+			"/categorias/**" 
+	};
+	
+	// Endpoints onde só são permitidas as operações de POST
+	private static final String[] PUBLIC_MATCHERS_POST = {
+			"/clientes/**"
+	};
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -69,7 +80,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		 * total, e os caminhos que não estiverem permitidos será necessária a autenticação.
 		 * Ademais, nos caminhos somente de leitura, o único método HTTP que será possível é o GET
 		 */
-		http.authorizeRequests().antMatchers(PUBLIC_MATCHERS).permitAll().antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll().anyRequest().authenticated();
+		http.authorizeRequests()
+			.antMatchers(PUBLIC_MATCHERS).permitAll()
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+			.anyRequest().authenticated();
 		
 		// Adicionando filtro de autenticação
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
