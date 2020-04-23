@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
@@ -94,4 +95,11 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(listaClientesDTO);
 	}
 	
+	@RequestMapping(value="/picture", method=RequestMethod.POST)
+	// RequestParam(name="file") -> O nome do form-data Postman para inserir um arquivo
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile multipartFile) { 
+		URI uri = clienteService.uploadProfilePicture(multipartFile);
+		
+		return ResponseEntity.created(uri).build();
+	}
 }

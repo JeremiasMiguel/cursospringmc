@@ -56,10 +56,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 			if(auth != null) {
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			}
-			
-			// Informa que o filtro pode seguir a execução normal da requisição
-			chain.doFilter(request, response);
 		}
+		/* Informa que o filtro pode seguir a execução normal da requisição
+		 *
+		 * Tal modificção do método doFilter para fora do condicional possibilitou a resolução
+		 * de alguns problemas, como o retorno 200, agora retorna 201 corretamente.
+		 * Bem como, a utilização do h2-console, que não era liberado para uso com o método
+		 * dentro do IF
+		 */
+		chain.doFilter(request, response);
 	}
 
 	private UsernamePasswordAuthenticationToken getAuthentication(String token) {

@@ -84,6 +84,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		res.addHeader("Authorization", "Bearer " + token);
 	}
 	
+	@SuppressWarnings("unused")
 	private class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {
 		 
         @Override

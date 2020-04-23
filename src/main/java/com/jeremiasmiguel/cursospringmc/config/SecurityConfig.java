@@ -44,7 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private JWTUtil jwtUtil;
 	
 	// Vetor de strings que definem quais os caminhos que estarão liberados
-	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
+	private static final String[] PUBLIC_MATCHERS = { 
+			"/h2-console/**" 
+	};
 	
 	// Vetor de strings com caminhos somente de leitura, onde só é possivel recuperar os dados, sem manipulação dos mesmos
 	private static final String[] PUBLIC_MATCHERS_GET = { 
@@ -54,7 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	// Endpoints onde só são permitidas as operações de POST
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/clientes/**",
+			"/clientes",
+			"/clientes/picture",
 			"/auth/forgot/**"
 	};
 

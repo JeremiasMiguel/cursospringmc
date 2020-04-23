@@ -1,5 +1,6 @@
 package com.jeremiasmiguel.cursospringmc.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jeremiasmiguel.cursospringmc.domain.Cidade;
 import com.jeremiasmiguel.cursospringmc.domain.Cliente;
@@ -34,6 +36,8 @@ public class ClienteService {
 	private ClienteRepository clienteRepository;
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private S3Service s3Service;
 	
 	// Para criptografar a senha no método fromDTO, na classe ClienteNewDTO
 	@Autowired
@@ -128,5 +132,9 @@ public class ClienteService {
 	private void updateData(Cliente novoCliente, Cliente cliente) {
 		novoCliente.setNome(cliente.getNome());
 		novoCliente.setEmail(cliente.getEmail());
+	}
+	
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		return s3Service.uploadFile(multipartFile);
 	}
 }
