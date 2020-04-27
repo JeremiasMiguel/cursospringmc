@@ -76,6 +76,8 @@ public class Cliente implements Serializable {
 	@JsonIgnore
 	private List<Pedido> pedidos = new ArrayList<>();
 	
+	private String imageURL;
+	
 	/* Todo cliente será tratado inicialmente com a enumeração Cliente
 	 * logicamente. Posteriormente, poderão ser adicionados como Admin,
 	 * de acordo com a escolha do administrador principal
@@ -206,5 +208,13 @@ public class Cliente implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
 	}
 }
