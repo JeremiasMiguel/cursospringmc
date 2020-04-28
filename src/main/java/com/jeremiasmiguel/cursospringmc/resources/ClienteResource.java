@@ -40,6 +40,12 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(objetoCliente);
 	}
 	
+	@RequestMapping(value="/email", method=RequestMethod.GET)
+	public ResponseEntity<Cliente> find(@RequestParam(value="value") String email) {
+		Cliente cliente = clienteService.findByEmail(email);
+		return ResponseEntity.ok().body(cliente);
+	}
+	
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO clienteNewDTO) { 
 		// Valid -> Para que o objeto DTO seja validado antes de ser manipulado | RequestBody -> Faz que o json se converta em objeto Java
