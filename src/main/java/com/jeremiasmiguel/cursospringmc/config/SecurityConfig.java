@@ -111,12 +111,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	/*
 	 * Definindo um Bean de CorsConfigurationSource que permite o acesso básico
 	 * de múltiplas fontes, ou seja, permitindo o acesso aos endpoints por múltiplas
-	 * fontes com as configurações básicas
+	 * fontes com as configurações básicas.
+	 * Add: liberando CORS para Put e Delete
 	 */
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+		configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS"));
+		
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		source.registerCorsConfiguration("/**", configuration);
+		
 		return source;
 	}
 	
