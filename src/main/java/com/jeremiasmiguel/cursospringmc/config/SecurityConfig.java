@@ -51,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	// Vetor de strings com caminhos somente de leitura, onde só é possivel recuperar os dados, sem manipulação dos mesmos
 	private static final String[] PUBLIC_MATCHERS_GET = { 
 			"/produtos/**", 
-			"/categorias/**" 
+			"/categorias/**",
+			"/estados/**"
 	};
 	
 	// Endpoints onde só são permitidas as operações de POST
